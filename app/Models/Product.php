@@ -18,4 +18,12 @@ class Product extends Model
     protected $casts = [
         'active' => 'boolean',
     ];
+
+
+    public function colors()
+    {
+        return $this->belongsToMany(Color::class);
+    }
+
+    
 }
