@@ -10,5 +10,11 @@ class Color extends Model
     use HasFactory;
 
     protected  $fillable=['hex'];
+
+
+     public function products()
+    {
+        return $this->belongsToMany(Product::class);
+    }
     
 }
