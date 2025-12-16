@@ -6,43 +6,33 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Http\Requests\ProductStoreRequest;
 use App\Http\Requests\ProductUpdateRequest;
+use App\Filters\ProductFilter; // تم الإبقاء على كلاس الفلتر
 
 class ProductController extends Controller
 {
-    public function index()
+  
+    public function index(ProductFilter $filters)
     {
-        return Product::latest()
-            ->when(request()->has('active'), function ($query) {
-                $query->where('active', request()->active);
-            })
-            ->get();
+        $products = Product::query()->latest();
+        $products = $filters->apply($products);
+        
+        return $products->get(); 
     }
 
+   
     public function store(ProductStoreRequest $request)
     {
-        $data = $request->validated();
-        if (!isset($data['active'])) {
-            $data['active'] = true;
-        }
-        $product = Product::create($data);
+        $product = Product::create($request->validated());
 
         return response()->json([
             'message' => 'Product created successfully',
-            'data'    => $product
+            'data'    => $product 
         ], 201);
     }
 
     public function update(ProductUpdateRequest $request, Product $product)
     {
-        $data = $request->validated();
-
-        if (isset($data['title_en']) && str_contains(strtolower($data['title_en']), 'inactive')) {
-            $data['active'] = false;
-        } elseif (!isset($data['active'])) {
-            $data['active'] = true;
-        }
-
-        $product->update($data);
+        $product->update($request->validated());
 
         return response()->json([
             'message' => 'Product updated successfully',
@@ -50,7 +40,7 @@ class ProductController extends Controller
         ]);
     }
 
-    
+   
     public function destroy(Product $product)
     {
         $product->delete();
