@@ -14,7 +14,6 @@ class InactivateProducts extends Command
     public function handle()
     {
         $inactivatedCount = Product::where('active', true)
-            ->where('updated_at', '<', Carbon::now()->subDays(30))
             ->update(['active' => false]);
 
         $this->info("Successfully set {$inactivatedCount} products to inactive.");
