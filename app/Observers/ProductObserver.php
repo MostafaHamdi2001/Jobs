@@ -1,22 +1,33 @@
 <?php
-
-namespace App\Observers;
+namespace App\Jobs;
 
 use App\Models\Product;
 use App\Models\Color;
-use Illuminate\Support\Facades\Mail;
 use App\Mail\ProductCreatedMail;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Mail;
 
-class ProductObserver
+class ProcessProductCreation implements ShouldQueue
 {
-    public function created(Product $product)
-    {
-        // 1️⃣ ربط المنتج بكل الألوان الموجودة
-        $colorIds = Color::pluck('id')->toArray();
-        $product->colors()->sync($colorIds);
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-        // 2️⃣ إرسال إيميل
+    protected $product;
+
+    public function __construct(Product $product)
+    {
+        $this->product = $product;
+    }
+
+    public function handle()
+    {
+        $colorIds = Color::pluck('id')->toArray();
+        $this->product->colors()->sync($colorIds);
+
         Mail::to(config('mail.from.address'))
-            ->send(new ProductCreatedMail($product));
+            ->send(new ProductCreatedMail($this->product));
     }
 }
