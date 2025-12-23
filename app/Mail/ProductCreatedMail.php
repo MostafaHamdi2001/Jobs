@@ -19,11 +19,6 @@ class ProductCreatedMail extends Mailable
      */
     public function __construct(public Product $product) {}
 
-    public function build()
-    {
-        return $this->subject('Product Created')
-            ->view('emails.product-created');
-    }
 
     /**
      * Get the message envelope.
@@ -41,7 +36,7 @@ class ProductCreatedMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'view.name',
+            view: 'emails.product-created',
         );
     }
 
