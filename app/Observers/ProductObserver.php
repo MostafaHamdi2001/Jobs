@@ -1,33 +1,13 @@
 <?php
-namespace App\Jobs;
+namespace App\Observers;
 
 use App\Models\Product;
-use App\Models\Color;
-use App\Mail\ProductCreatedMail;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Mail;
+use App\Jobs\ProcessProductCreation;
 
-class ProcessProductCreation implements ShouldQueue
+class ProductObserver
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
-    protected $product;
-
-    public function __construct(Product $product)
+    public function created(Product $product)
     {
-        $this->product = $product;
-    }
-
-    public function handle()
-    {
-        $colorIds = Color::pluck('id')->toArray();
-        $this->product->colors()->sync($colorIds);
-
-        Mail::to(config('mail.from.address'))
-            ->send(new ProductCreatedMail($this->product));
+        ProcessProductCreation::dispatch($product);
     }
 }
