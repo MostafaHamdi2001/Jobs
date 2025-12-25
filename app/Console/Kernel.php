@@ -12,8 +12,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // تشغيل الأمر المخصص يومياً في تمام الساعة 01:00
-        $schedule->command('products:inactivate-old')->dailyAt('01:00');
+        $runTime = env('PRODUCT_INACTIVATE_TIME', '00:00');
+        $schedule->command('products:inactivate-old')->dailyAt($runTime);
     }
 
     /**
