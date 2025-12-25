@@ -45,6 +45,9 @@ class ColorController extends Controller
     // حذف اللون
     public function destroy(Color $color)
     {
+        if($color->products()->exists()){
+            return redirect()->route("colors.index")->with("error","The color cannot be erased because it is linked to existing products. ");
+        }
         $color->delete();
         return redirect()->route('colors.index')->with('success', 'Color deleted successfully');
     }
