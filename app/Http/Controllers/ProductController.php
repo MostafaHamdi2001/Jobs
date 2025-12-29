@@ -26,6 +26,17 @@ class ProductController extends Controller
     public function store(ProductStoreRequest $request)
     {
         Product::create($request->validated());
+
+        $product = Product::create($request->validated());
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('products', 'public');
+                $product->images()->create([
+                    'image_path' => $path
+                ]);
+            }
+        }
+
         return redirect()->route('products.index')->with('success', 'Product created successfully');
     }
 
@@ -39,6 +50,15 @@ class ProductController extends Controller
     public function update(ProductUpdateRequest $request, Product $product)
     {
         $product->update($request->validated());
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('products', 'public');
+                $product->images()->create([
+                    'image_path' => $path
+                ]);
+            }
+        }
         return redirect()->route('products.index')->with('success', 'Product updated successfully');
     }
 
