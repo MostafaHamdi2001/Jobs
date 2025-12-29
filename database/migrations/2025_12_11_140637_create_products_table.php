@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string("title_en");
             $table->string("title_ar");
             $table->boolean("active")->default(true);
+            $table->softDeletes();
             $table->timestamps();
         });
     }
