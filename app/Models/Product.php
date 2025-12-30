@@ -21,6 +21,7 @@ class Product extends Model
         'active' => 'boolean',
     ];
 
+    protected $dates = ['deleted_at'];
 
     public function colors()
     {
