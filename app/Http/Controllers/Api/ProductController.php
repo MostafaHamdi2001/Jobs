@@ -12,6 +12,16 @@ use Illuminate\Support\Facades\Storage;
 class ProductController extends Controller
 {
 
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+        $this->middleware('permission:display products')->only('index');
+        $this->middleware('permission:add products')->only('store');
+        $this->middleware('permission:edit products')->only('update');
+        $this->middleware('permission:delete products')->only('destroy');
+    }
+
+
     public function index(ProductFilter $filters)
     {
         $products = Product::query()->latest();
@@ -34,7 +44,7 @@ class ProductController extends Controller
     public function update(ProductUpdateRequest $request, Product $product)
     {
         $product->update($request->validated());
-        
+
         return response()->json([
             'message' => 'Product updated successfully',
             'data'    => $product
@@ -42,7 +52,7 @@ class ProductController extends Controller
     }
 
 
-    public function destroy($id)
+    public function forceDestroy($id)
     {
         $product = Product::withTrashed()->with('images')->findOrFail($id);
 
@@ -50,7 +60,7 @@ class ProductController extends Controller
             Storage::disk('public')->delete($image->image_path);
         }
 
-        $product->forceDelete(); 
+        $product->forceDelete();
 
         return response()->json([
             'message' => 'Product and its images permanently deleted',
