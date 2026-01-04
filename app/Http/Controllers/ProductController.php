@@ -9,6 +9,14 @@ use App\Http\Requests\ProductUpdateRequest;
 
 class ProductController extends Controller
 {
+    public function __construct()
+{
+    $this->middleware('auth:api');
+    $this->middleware('permission:display products')->only('index');
+    $this->middleware('permission:add products')->only('store');
+    $this->middleware('permission:edit products')->only('update');
+    $this->middleware('permission:delete products')->only('destroy');
+}
     public function index()
     {
         $products = Product::latest()->get();
