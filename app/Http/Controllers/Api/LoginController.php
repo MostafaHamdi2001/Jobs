@@ -25,6 +25,7 @@ class LoginController extends Controller
             'token' => $token,
             'user' => $user
         ], 200);
+        
     }
 
     return response()->json(['message' => 'Unauthorized'], 401);
