@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\Login;
+use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\ColorController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
@@ -18,6 +20,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+// ===== Login =====
+Route::post('/login', [LoginController::class, 'login']);
 
 // ===== Products Group =====
 Route::prefix('products')->group(function () {
