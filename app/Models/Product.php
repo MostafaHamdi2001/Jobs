@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -31,5 +32,12 @@ class Product extends Model
     public function images()
     {
         return $this->hasMany(ProductImage::class);
+    }
+
+    public function exportPdf(){
+        $products = Product::with('colors' , 'photos')->get();
+        $pdf=Pdf::loadView('pdf.products_report',compact('products'));
+        return $pdf->stream('products-list.pdf');
+
     }
 }
