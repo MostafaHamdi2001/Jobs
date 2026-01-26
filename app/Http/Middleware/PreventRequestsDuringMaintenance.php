@@ -17,7 +17,7 @@ class PreventRequestsDuringMaintenance extends Middleware
         'api/logout',
     ];
 
-   
+    
     public function handle($request, Closure $next)
     {
         if ($request->isMethod('get')) {
