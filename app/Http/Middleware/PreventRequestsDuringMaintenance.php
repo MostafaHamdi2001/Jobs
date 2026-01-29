@@ -11,9 +11,7 @@ class PreventRequestsDuringMaintenance extends Middleware
      * @var array<int, string>
      */
     protected $except = [
-        'login',
         'api/login',
-        'logout',
         'api/logout',
     ];
 
@@ -21,12 +19,12 @@ class PreventRequestsDuringMaintenance extends Middleware
     public function handle($request, Closure $next)
     {
         if ($request->isMethod('get')) {
-            return parent::handle($request, $next);
+            return $next($request);
         }
 
         foreach ($this->except as $except) {
-            if ($request->fullUrlIs($except) || $request->is($except)) {
-                return parent::handle($request, $next);
+            if ($request->is($except)) {
+                return $next($request);
             }
         }
 
